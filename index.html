@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solo Leveling Painel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <h1>⚔️ Solo Leveling Painel</h1>
+
+    <div id="user-info">
+      <p id="status">Você não está logado.</p>
+    </div>
+
+    <button id="login-btn">Login com Google</button>
+    <button id="logout-btn" style="display:none;">Logout</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+
+  <!-- Configuração do Firebase -->
+  <script>
+    // 🔥 Substitua pelos dados do SEU projeto Firebase!
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJECT.firebaseapp.com",
+      projectId: "SEU_PROJECT_ID",
+      storageBucket: "SEU_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "SUA_APP_ID"
+    };
+
+    // Inicializa Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.getAuth(app);
+  </script>
+
+  <!-- Lógica de login -->
+  <script>
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const statusText = document.getElementById("status");
+
+    // Provider do Google
+    const provider = new firebase.GoogleAuthProvider();
+
+    // Login
+    loginBtn.addEventListener("click", async () => {
+      try {
+        const result = await firebase.signInWithPopup(auth, provider);
+        const user = result.user;
+        statusText.innerText = `✅ Logado como: ${user.displayName}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      } catch (error) {
+        alert("Erro ao logar: " + error.message);
+        console.error(error);
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      await firebase.signOut(auth);
+      statusText.innerText = "Você não está logado.";
+      loginBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+    });
+  </script>
+</body>
+</html>
